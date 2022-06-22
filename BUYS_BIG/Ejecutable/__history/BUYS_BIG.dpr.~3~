@@ -1,0 +1,19 @@
+program BUYS_BIG;
+
+uses
+  Vcl.Forms,
+  FrmGestion in '..\Fuente\Vista\Gestion\FrmGestion.pas' {Form1},
+  DmConnectionDB in '..\Fuente\DataModel\DmConnectionDB.pas' {DmConexion: TDataModule},
+  FrmPrincipal in '..\Fuente\Vista\FrmPrincipal.pas' {Form2},
+  Control_Gestion in '..\Fuente\Controlador\Gestion\Control_Gestion.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDmConexion, DmConexion);
+  Application.CreateForm(TForm2, Form2);
+  Application.Run;
+end.

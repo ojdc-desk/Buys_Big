@@ -1,0 +1,13 @@
+object DmConexion: TDmConexion
+  OldCreateOrder = False
+  Height = 363
+  Width = 633
+  object AdoConexionBd: TADOConnection
+    Connected = True
+    ConnectionString = 
+      'Provider=MSDASQL.1;Persist Security Info=False;Data Source=BUYS_' +
+      'BIG;Initial Catalog=BUYS_BIG'
+    Left = 104
+    Top = 32
+  end
+end

@@ -1,0 +1,16 @@
+program BUYS_BIG;
+
+uses
+  Vcl.Forms,
+  FrmPrincipal in '..\Fuente\Vista\FrmPrincipal.pas' {Form1},
+  DmConnectionDB in '..\Fuente\DataModel\DmConnectionDB.pas' {DmConexion: TDataModule};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TDmConexion, DmConexion);
+  Application.Run;
+end.

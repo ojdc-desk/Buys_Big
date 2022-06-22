@@ -1,0 +1,184 @@
+object DmGestion_Data: TDmGestion_Data
+  OldCreateOrder = False
+  Height = 336
+  Width = 517
+  object QryClientes: TADOQuery
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = '000'
+        Attributes = [paNullable]
+        DataType = ftBCD
+        Precision = 18
+        Size = 19
+        Value = Null
+      end>
+    SQL.Strings = (
+      ''
+      ''
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      #9'SELECT  * FROM CLIENTES   WITH (NOLOCK)'
+      #9'WHERE CLIENTE =:"000"')
+    Left = 64
+    Top = 40
+    object QryClientesCLIENTE: TBCDField
+      FieldName = 'CLIENTE'
+      Precision = 18
+      Size = 0
+    end
+    object QryClientesNOMBRE_CLIENTE: TStringField
+      FieldName = 'NOMBRE_CLIENTE'
+      Size = 500
+    end
+    object QryClientesSEXO: TStringField
+      FieldName = 'SEXO'
+      FixedChar = True
+      Size = 1
+    end
+    object QryClientesFECHA_NACIMIENTO: TDateField
+      FieldName = 'FECHA_NACIMIENTO'
+    end
+    object QryClientesNUM_DEPARTAMENTO: TStringField
+      FieldName = 'NUM_DEPARTAMENTO'
+      Size = 2
+    end
+    object QryClientesNUM_CIUDAD: TStringField
+      FieldName = 'NUM_CIUDAD'
+      Size = 3
+    end
+    object QryClientesDIRECCION: TStringField
+      FieldName = 'DIRECCION'
+      Size = 500
+    end
+    object QryClientesNUM_TELEFONICO: TBCDField
+      FieldName = 'NUM_TELEFONICO'
+      Precision = 10
+      Size = 0
+    end
+  end
+  object QryProductos: TADOQuery
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'CODPROCU'
+        Attributes = [paNullable]
+        DataType = ftString
+        Precision = 15
+        Size = 15
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      
+        #9'SELECT  * FROM PRODUCTOS   WITH (NOLOCK) WHERE PRODUCTO =:"CODP' +
+        'ROCU"')
+    Left = 64
+    Top = 104
+    object QryProductosPRODUCTO: TStringField
+      FieldName = 'PRODUCTO'
+      Size = 15
+    end
+    object QryProductosCATEGORIA: TStringField
+      FieldName = 'CATEGORIA'
+      Size = 5
+    end
+    object QryProductosNOMBRE_PRODUCTO: TStringField
+      FieldName = 'NOMBRE_PRODUCTO'
+      Size = 800
+    end
+    object QryProductosVALOR: TFloatField
+      FieldName = 'VALOR'
+    end
+  end
+  object QryCiudades: TADOQuery
+    Active = True
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      ''
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      
+        #9'SELECT CONCAT (NUM_DEPARTAMENTO,NUM_CIUDAD) AS CLAVE , * FROM C' +
+        'IUDADES   WITH (NOLOCK)  '
+      #9)
+    Left = 344
+    Top = 248
+    object QryCiudadesNUM_DEPARTAMENTO: TStringField
+      FieldName = 'NUM_DEPARTAMENTO'
+      Size = 2
+    end
+    object QryCiudadesNUM_CIUDAD: TStringField
+      FieldName = 'NUM_CIUDAD'
+      Size = 3
+    end
+    object QryCiudadesNOMBRE_CIUDAD: TStringField
+      FieldName = 'NOMBRE_CIUDAD'
+      Size = 500
+    end
+    object QryCiudadesCLAVE: TStringField
+      FieldName = 'CLAVE'
+      ReadOnly = True
+      Size = 5
+    end
+  end
+  object DsDepartamento: TDataSource
+    DataSet = QryDepartamentos
+    Left = 416
+    Top = 192
+  end
+  object DsCiudades: TDataSource
+    DataSet = QryCiudades
+    Left = 416
+    Top = 248
+  end
+  object QryDepartamentos: TADOQuery
+    Active = True
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      ''
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      #9'SELECT  * FROM DEPARTAMENTOS   WITH (NOLOCK)')
+    Left = 344
+    Top = 192
+    object QryDepartamentosNUM_DEPARTAMENTO: TStringField
+      FieldName = 'NUM_DEPARTAMENTO'
+      Size = 2
+    end
+    object QryDepartamentosNOMBRE_DEPARTAMENTO: TStringField
+      FieldName = 'NOMBRE_DEPARTAMENTO'
+      Size = 500
+    end
+  end
+  object QryCategorias: TADOQuery
+    Active = True
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <>
+    SQL.Strings = (
+      ''
+      ''
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      #9'SELECT  * FROM CATEGORIAS_DE_PRODUCTOS   WITH (NOLOCK)'
+      '')
+    Left = 344
+    Top = 136
+    object QryCategoriasCATEGORIA: TStringField
+      FieldName = 'CATEGORIA'
+      Size = 5
+    end
+    object QryCategoriasNOMBRE_CATEGORIA: TStringField
+      FieldName = 'NOMBRE_CATEGORIA'
+      Size = 200
+    end
+  end
+  object DsCategorias: TDataSource
+    DataSet = QryCategorias
+    Left = 416
+    Top = 136
+  end
+end
