@@ -12,16 +12,28 @@ Type
     Clie_Identificacion : Currency;
     Clie_Nombre         : String;
     Clie_Sexo           : String;
-    Clie_FechaNacimiento: Tdate;
+    Clie_FechaNacimiento: String;
     Clie_Departamento   : String;
     Clie_Municipio      : String;
     Clie_Direccion      : String;
     Clie_Telefono       : Currency;
 
+
     Pro_Codigo          : String;
-    Pro_Categoria       : String;
-    Pro_Nombre          : String;
-    Pro_Valor           : Currency;
+    Num_Factura         : Currency;
+    Valor_Pro           : Currency;
+    Cant_Pro            : Currency;
+    Fecha_Factura       : TDateTime;
+    Valor_Total         : Currency;
+
+         Pro_Categoria : String;
+         Pro_Nombre    : String;
+         Pro_Valor     : Currency;
+
+
+         Tipo_Factura   : String;
+         Cons_Factura   : Currency;
+         Fecha_Temporal : TDateTime;
 
     Public Function RegistrarClienteBD(Actividad:String):String;
     Public Function ValidarClienteBD(Cliente_Id:Currency):String;
@@ -30,9 +42,6 @@ Type
     Public Function RegistrarProductoBD(Actividad:String):String;
     Public Function ValidarProductoBD(Producto_Id:String):String;
 
-
-
-
     { Public declarations }
   end;
 
@@ -40,7 +49,8 @@ Type
   implementation
 
   uses DmGestion;
- //******* Validacion de Existencia del numero del cliente ingresaro en base de datos.
+
+// ****** Validacion de Existencia del numero del cliente ingresaro en base de datos.
 Function TControl_Gestion.ValidarClienteBD(Cliente_Id:Currency):String;
     Var Modelo_Gestion : TDmGestion_Data;
 begin
@@ -50,10 +60,13 @@ begin
          Begin
             Result := 'El Cliente ya se encuentra registrado en la base de datos.';
          End Else Begin Result := '' ; End;
-    finally
+    Finally
       DmGestion_Data.Free;
-    end;
+    End;
 end;
+
+
+
 //**** Acciones y validaciones para el insert o update de un registro en la tabla cliente.
 Function TControl_Gestion.RegistrarClienteBD(Actividad:String):String;
     Var Modelo_Gestion : TDmGestion_Data;
@@ -107,6 +120,11 @@ begin
       DmGestion_Data.Free;
     End;
 end;
+
+
+
+
+
 
 
 

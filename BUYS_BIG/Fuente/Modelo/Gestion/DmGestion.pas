@@ -9,14 +9,6 @@ type
   TDmGestion_Data = class(TDataModule)
     QryClientes: TADOQuery;
     QryProductos: TADOQuery;
-    QryClientesCLIENTE: TBCDField;
-    QryClientesNOMBRE_CLIENTE: TStringField;
-    QryClientesSEXO: TStringField;
-    QryClientesFECHA_NACIMIENTO: TDateField;
-    QryClientesNUM_DEPARTAMENTO: TStringField;
-    QryClientesNUM_CIUDAD: TStringField;
-    QryClientesDIRECCION: TStringField;
-    QryClientesNUM_TELEFONICO: TBCDField;
     QryProductosPRODUCTO: TStringField;
     QryProductosCATEGORIA: TStringField;
     QryProductosNOMBRE_PRODUCTO: TStringField;
@@ -39,23 +31,55 @@ type
     QryCuentaProductosCANT_PRODUCTOS: TIntegerField;
     DsProductos: TDataSource;
     QryCabezaFactura: TADOQuery;
-    IntegerField1: TIntegerField;
     QryDetalleFactura: TADOQuery;
+    DsDetalleFactura: TDataSource;
+    QryClientesCLIENTE: TBCDField;
+    QryClientesNOMBRE_CLIENTE: TStringField;
+    QryClientesSEXO: TStringField;
+    QryClientesFECHA_NACIMIENTO: TWideStringField;
+    QryClientesNUM_DEPARTAMENTO: TStringField;
+    QryClientesNUM_CIUDAD: TStringField;
+    QryClientesDIRECCION: TStringField;
+    QryClientesNUM_TELEFONICO: TBCDField;
+    QryCabezaFacturaNUMERO: TBCDField;
+    QryCabezaFacturaFECHA: TDateTimeField;
+    QryCabezaFacturaCLIENTE: TBCDField;
+    QryCabezaFacturaTOTAL: TFloatField;
+    QryProductosDisponibles: TADOQuery;
+    QryProductosDisponiblesPRODUCTO: TStringField;
+    QryProductosDisponiblesNOMBRE_PRODUCTO: TStringField;
+    DsProductosDisponibles: TDataSource;
+    QryDetalleFacturaITEM: TLargeintField;
     QryDetalleFacturaNOMBRE_PRODUCTO: TStringField;
-    QryDetalleFacturaVALOR_PPRODUCTO: TWideStringField;
+    QryDetalleFacturaVALOR_TOTAL: TWideStringField;
     QryDetalleFacturaNUMERO: TBCDField;
+    QryDetalleFacturaNUMERO_ITEM: TBCDField;
     QryDetalleFacturaPRODUCTO: TStringField;
     QryDetalleFacturaCANTIDAD: TBCDField;
     QryDetalleFacturaVALOR: TFloatField;
-    DsDetalleFactura: TDataSource;
+    QryDetalleFacturaVALOR_UNIDAD: TWideStringField;
+    ValidaNumeroFactura: TADOQuery;
+    ValidaNumeroFacturaTIPO_FACTURA: TStringField;
+    ValidaNumeroFacturaNUM_FACTURA: TBCDField;
+    ValidaNumeroFacturaFEC_FACTURA: TDateTimeField;
+    QrySuplente: TADOQuery;
   private
     { Private declarations }
   public
+
     Public Function RegistrarClienteBD(Datos:TControl_Gestion;Actividad:String):Currency;
     Public Function ValidarClienteBD(Datos:TControl_Gestion;Cliente_Id:Currency):Boolean;
 
     Public Function RegistrarProducto(Datos:TControl_Gestion;Actividad:String):Currency;
     Public Function ValidarProdcutoBD(Datos:TControl_Gestion;Producto_Id:String):Boolean;
+
+    Public Function FacturarProducto(Datos:TControl_Gestion):Boolean;
+
+    Public Procedure ConsultaDetalle(Factura:Currency);
+    Public Procedure ProdcutosDisponibles(Factura:Currency);
+
+    Public Function GenerarNumeroFactura(Datos:TControl_Gestion):Boolean;
+
     { Public declarations }
   end;
 var
@@ -90,12 +114,12 @@ begin
        Else
           Begin Result := False; End;
 end;
-
 //*** Registro de un Cliente en la base de datos.
 Function TDmGestion_Data.RegistrarClienteBD(Datos:TControl_Gestion;Actividad:String):Currency;
 begin
    Try
      DmConexion.AdoConexionBd.BeginTrans;
+
      QryClientes.Close;
      QryClientes.Parameters[0].Value := Datos.Clie_Identificacion;
      QryClientes.Open;
@@ -121,8 +145,6 @@ begin
       DmConexion.AdoConexionBd.RollbackTrans;
    End;
 end;
-
-
 //*** Validacion de un Cliente en la base de datos.
 Function TDmGestion_Data.ValidarProdcutoBD(Datos:TControl_Gestion;Producto_Id:String):Boolean;
 begin
@@ -147,6 +169,7 @@ Function TDmGestion_Data.RegistrarProducto(Datos:TControl_Gestion;Actividad:Stri
 begin
    Try
      DmConexion.AdoConexionBd.BeginTrans;
+
      QryProductos.Close;
      QryProductos.Parameters[0].Value := Datos.Pro_Codigo;
      QryProductos.Open;
@@ -163,6 +186,7 @@ begin
          QryProductosNOMBRE_PRODUCTO.Value  := UpperCase(Datos.Pro_Nombre);
          QryProductosVALOR.Value            := Datos.Pro_Valor;
          QryProductos.Post;
+
       DmConexion.AdoConexionBd.CommitTrans;
       Result   :=  1;
    Except
@@ -173,5 +197,127 @@ end;
 
 
 
+//*** Consulta el detalle de una factura.
+procedure TDmGestion_Data.ConsultaDetalle(Factura: Currency);
+begin
+     QryDetalleFactura.Close;
+     QryDetalleFactura.Parameters[0].Value := Factura ;
+     QryDetalleFactura.Open;
+end;
+//*** Consulta los productos disponibles.
+procedure TDmGestion_Data.ProdcutosDisponibles(Factura: Currency);
+begin
+     QryProductosDisponibles.Close;
+     QryProductosDisponibles.Parameters[0].Value := Factura ;
+     QryProductosDisponibles.Open;
+end;
+
+//*** Registro de un producto en la factura.
+function TDmGestion_Data.FacturarProducto(Datos: TControl_Gestion): Boolean;
+begin
+       Try
+         DmConexion.AdoConexionBd.BeginTrans;
+
+         ConsultaDetalle(Datos.Num_Factura);
+
+         QryProductos.Close;
+         QryProductos.Parameters[0].Value := Datos.Pro_Codigo;
+         QryProductos.Open;
+
+         //--------- Si no retorna resultados, damos por sentado que es el primer producto por lo cual se registrar
+         //--------- primero el emcabezado y luego del detalle.
+
+         If ( QryDetalleFactura.RecordCount = 0 ) Then
+          Begin
+              QryCabezaFactura.Close;
+              QryCabezaFactura.Parameters[0].Value :=  Datos.Num_Factura;
+              QryCabezaFactura.Open;
+
+              QryCabezaFactura.Insert;
+              QryCabezaFacturaNUMERO.Value   := Datos.Num_Factura;
+              QryCabezaFacturaFECHA.Value    := Datos.Fecha_Factura;
+              QryCabezaFacturaCLIENTE.Value  := Datos.Clie_Identificacion;
+              QryCabezaFacturaTOTAL.Value    := QryProductosVALOR.Value*Datos.Cant_Pro;
+              QryCabezaFactura.Post;
+
+                 //------ Registro del detalle del producto seleccionado.
+                 QryDetalleFactura.Insert;
+                 QryDetalleFacturaNUMERO.Value       := Datos.Num_Factura;                //--- Numero Factura
+                 QryDetalleFacturaNUMERO_ITEM.Value  := QryDetalleFactura.RecordCount+1;  //--- Itme Adicionado
+                 QryDetalleFacturaPRODUCTO.Value     := Datos.Pro_Codigo;                 //--- Codigo Producto
+                 QryDetalleFacturaCANTIDAD.Value     := Datos.Cant_Pro;                   //--- Cantidad Producto
+                 QryDetalleFacturaVALOR.Value        := QryProductosVALOR.Value;          //--- Valor Producto
+                 QryDetalleFactura.Post;
+          End
+             Else
+                 Begin   //------- Registro de la tabla detalle factura.
+
+                     QryCabezaFactura.Close;
+                     QryCabezaFactura.Parameters[0].Value := Datos.Num_Factura;
+                     QryCabezaFactura.Open;
+
+                     QryDetalleFactura.Insert;
+                     QryDetalleFacturaNUMERO.Value       := Datos.Num_Factura;                //--- Numero Factura
+                     QryDetalleFacturaNUMERO_ITEM.Value  := QryDetalleFactura.RecordCount+1;  //--- Itme Adicionado
+                     QryDetalleFacturaPRODUCTO.Value     := Datos.Pro_Codigo;                 //--- Codigo Producto
+                     QryDetalleFacturaCANTIDAD.Value     := Datos.Cant_Pro;                   //--- Codigo Producto
+                     QryDetalleFacturaVALOR.Value        := QryProductosVALOR.Value;          //--- Valor  Producto
+                     QryDetalleFactura.Post;
+
+                     QryCabezaFactura.Edit;
+                     QryCabezaFacturaTOTAL.Value   := QryCabezaFacturaTOTAL.Value + (QryProductosVALOR.Value*Datos.Cant_Pro);
+                     QryCabezaFactura.Post;
+                 End;
+
+          DmConexion.AdoConexionBd.CommitTrans;
+
+          Datos.Valor_Total := QryCabezaFacturaTOTAL.Value;
+
+          Result   :=  True;
+       Except
+          Result   :=  False;
+          DmConexion.AdoConexionBd.RollbackTrans;
+       End;
+end;
+
+
+
+
+
+ //***** Validar si el cliente tiene numero de facturas en  ceros,
+function TDmGestion_Data.GenerarNumeroFactura(Datos: TControl_Gestion): Boolean;
+begin
+    { Si elcliente tiene facturas en cero, se da por entendido que la factura sigue en proceso y se debe cargar productos y
+      finalizar el procesode facturacion  o dirigirce a la seccion de eliminacion de facturas.  }
+    Try
+            ValidaNumeroFactura.Close;
+            ValidaNumeroFactura.Parameters[0].Value := DATOS.Clie_Identificacion;
+            ValidaNumeroFactura.Open;
+
+            If ( ValidaNumeroFactura.RecordCount <> 0 ) Then
+            Begin
+               Datos.Tipo_Factura   := ValidaNumeroFacturaTIPO_FACTURA.Value;
+               Datos.Cons_Factura   := ValidaNumeroFacturaNUM_FACTURA.Value;
+               Datos.Fecha_Temporal := ValidaNumeroFacturaFEC_FACTURA.Value;
+             End
+               Else
+                   Begin
+                       QrySuplente.Close;
+                       QrySuplente.SQL.Clear;
+                       QrySuplente.SQL.Add( ' SELECT COUNT(*)+1 AS NUM_FACTURA FROM CABEZA_FACTURA ');
+                       QrySuplente.Open;
+
+                       Datos.Tipo_Factura   := 'NUEVA';
+                       Datos.Cons_Factura   := QrySuplente.FieldByName('NUM_FACTURA').Value;
+                       Datos.Fecha_Temporal := Now();
+                   End;
+      Result := True;
+    Finally
+      Result := False;
+    End;
+
+
+  Result := True;
+end;
 
 end.
