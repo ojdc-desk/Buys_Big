@@ -12,7 +12,7 @@ Type
     Clie_Identificacion : Currency;
     Clie_Nombre         : String;
     Clie_Sexo           : String;
-    Clie_FechaNacimiento: String;
+    Clie_FechaNacimiento: TDateTime;
     Clie_Departamento   : String;
     Clie_Municipio      : String;
     Clie_Direccion      : String;

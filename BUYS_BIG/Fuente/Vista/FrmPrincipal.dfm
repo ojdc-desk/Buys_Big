@@ -13,11 +13,4 @@ object Form2: TForm2
   OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 200
-    Top = 216
-    Width = 139
-    Height = 13
-    Caption = 'PRINCIPAL HOLAAAAAAAAA'
-  end
 end

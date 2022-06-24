@@ -33,14 +33,6 @@ type
     QryCabezaFactura: TADOQuery;
     QryDetalleFactura: TADOQuery;
     DsDetalleFactura: TDataSource;
-    QryClientesCLIENTE: TBCDField;
-    QryClientesNOMBRE_CLIENTE: TStringField;
-    QryClientesSEXO: TStringField;
-    QryClientesFECHA_NACIMIENTO: TWideStringField;
-    QryClientesNUM_DEPARTAMENTO: TStringField;
-    QryClientesNUM_CIUDAD: TStringField;
-    QryClientesDIRECCION: TStringField;
-    QryClientesNUM_TELEFONICO: TBCDField;
     QryCabezaFacturaNUMERO: TBCDField;
     QryCabezaFacturaFECHA: TDateTimeField;
     QryCabezaFacturaCLIENTE: TBCDField;
@@ -71,6 +63,21 @@ type
     QryTrazaClienteCANT_PRODUCTOS: TIntegerField;
     QryTrazaClienteVALOR_TOTAL_2: TWideStringField;
     QryEliminaTraza: TADOQuery;
+    QryClientesCLIENTE: TBCDField;
+    QryClientesNOMBRE_CLIENTE: TStringField;
+    QryClientesSEXO: TStringField;
+    QryClientesFECHA_NACIMIENTO: TDateTimeField;
+    QryClientesNUM_DEPARTAMENTO: TStringField;
+    QryClientesNUM_CIUDAD: TStringField;
+    QryClientesDIRECCION: TStringField;
+    QryClientesNUM_TELEFONICO: TBCDField;
+    QryConsultaProductosXCategoria: TADOQuery;
+    QryConsultaProductosXCategoriaPRODUCTO: TStringField;
+    QryConsultaProductosXCategoriaCATEGORIA: TStringField;
+    QryConsultaProductosXCategoriaNOMBRE_PRODUCTO: TStringField;
+    QryConsultaProductosXCategoriaVALOR: TFloatField;
+    QryConsultaProductosXCategoriaVALOR_MOSTRAR: TWideStringField;
+    DsConsultaProductosXCategoria: TDataSource;
   private
     { Private declarations }
   public
@@ -89,6 +96,9 @@ type
     Public Function GenerarNumeroFactura(Datos:TControl_Gestion):Boolean;
 
     Public Function EliminarTraza(Cliente,Factura:Currency):Boolean;
+
+    Public Function ConsultaProxCategoria(Datos:TControl_Gestion):Boolean;
+
 
     { Public declarations }
   end;
@@ -180,18 +190,29 @@ begin
    Try
      DmConexion.AdoConexionBd.BeginTrans;
 
-     QryProductos.Close;
-     QryProductos.Parameters[0].Value := Datos.Pro_Codigo;
-     QryProductos.Open;
 
      If ( Actividad = 'REGISTRAR PRODUCTO' ) Then
       Begin
          QryCuentaProductos.Close;
          QryCuentaProductos.Open;
+
          CodProductoNuevo :=  Datos.Pro_Categoria + FormatFloat('0000000000',QryCuentaProductosCANT_PRODUCTOS.Value+1);
+
+        QryProductos.Close;
+        QryProductos.Parameters[0].Value := CodProductoNuevo; //Datos.Pro_Codigo;
+        QryProductos.Open;
+
          QryProductos.Insert;
          QryProductosPRODUCTO.Value         :=  CodProductoNuevo;
-      End Else Begin  QryClientes.Edit;  End;
+      End
+        Else
+            Begin
+                QryProductos.Close;
+                QryProductos.Parameters[0].Value := Datos.Pro_Codigo;
+                QryProductos.Open;
+                QryProductos.Edit;
+            End;
+
          QryProductosCATEGORIA.Value        := Datos.Pro_Categoria;
          QryProductosNOMBRE_PRODUCTO.Value  := UpperCase(Datos.Pro_Nombre);
          QryProductosVALOR.Value            := Datos.Pro_Valor;
@@ -292,6 +313,17 @@ begin
 end;
 
 //*** Elimina la trazabilidad de una factura.
+function TDmGestion_Data.ConsultaProxCategoria(
+  Datos: TControl_Gestion): Boolean;
+begin
+    If Datos.Pro_Categoria <> EmptyStr Then
+      Begin
+         QryConsultaProductosXCategoria.Close;
+         QryConsultaProductosXCategoria.Parameters[0].Value := Datos.Pro_Categoria;
+         QryConsultaProductosXCategoria.Open;
+      End;
+end;
+
 function TDmGestion_Data.EliminarTraza(Cliente, Factura: Currency): Boolean;
 begin
    Try
@@ -300,7 +332,7 @@ begin
      QryEliminaTraza.Close;
      QryEliminaTraza.Parameters[0].Value := Cliente;
      QryEliminaTraza.Parameters[1].Value := Factura;
-     QryEliminaTraza.Open;
+     QryEliminaTraza.ExecSQL;
 
       DmConexion.AdoConexionBd.CommitTrans;
       Result   :=  True;

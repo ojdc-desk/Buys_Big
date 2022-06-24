@@ -7,7 +7,7 @@ object DmGestion_Data: TDmGestion_Data
     CursorType = ctStatic
     Parameters = <
       item
-        Name = '000'
+        Name = '10'
         Size = -1
         Value = Null
       end>
@@ -18,7 +18,7 @@ object DmGestion_Data: TDmGestion_Data
       'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
       #9'SELECT  *  FROM  CLIENTES   WITH (NOLOCK)'
       ''
-      #9'WHERE CLIENTE =:"000"')
+      #9'WHERE CLIENTE = :"10"')
     Left = 40
     Top = 40
     object QryClientesCLIENTE: TBCDField
@@ -35,9 +35,8 @@ object DmGestion_Data: TDmGestion_Data
       FixedChar = True
       Size = 1
     end
-    object QryClientesFECHA_NACIMIENTO: TWideStringField
+    object QryClientesFECHA_NACIMIENTO: TDateTimeField
       FieldName = 'FECHA_NACIMIENTO'
-      Size = 10
     end
     object QryClientesNUM_DEPARTAMENTO: TStringField
       FieldName = 'NUM_DEPARTAMENTO'
@@ -72,7 +71,7 @@ object DmGestion_Data: TDmGestion_Data
         #9'SELECT  * FROM PRODUCTOS   WITH (NOLOCK) WHERE PRODUCTO =:"CODp' +
         'roduc"')
     Left = 360
-    Top = 56
+    Top = 80
     object QryProductosPRODUCTO: TStringField
       FieldName = 'PRODUCTO'
       Size = 15
@@ -203,7 +202,7 @@ object DmGestion_Data: TDmGestion_Data
   object DsProductos: TDataSource
     DataSet = QryProductos
     Left = 440
-    Top = 56
+    Top = 80
   end
   object QryCabezaFactura: TADOQuery
     Connection = DmConexion.AdoConexionBd
@@ -358,9 +357,9 @@ object DmGestion_Data: TDmGestion_Data
       '  Set @TipoFactura   = '#39'NUEVA'#39';'
       ''
       
-        '  SELECT  TOP 1  @NumFactura = NUMERO , @FechaFac = FECHA  FROM ' +
-        'CABEZA_FACTURA  WHERE CLIENTE = @Num_IdCliente AND TOTAL = 0 OR ' +
-        'TOTAL IS NULL'
+        '  SELECT   @NumFactura = NUMERO , @FechaFac = FECHA  FROM CABEZA' +
+        '_FACTURA  WHERE CLIENTE = @Num_IdCliente AND TOTAL = 0 OR TOTAL ' +
+        'IS NULL'
       '  '#9
       '  IF @@ROWCOUNT > 0'
       #9'BEGIN '
@@ -372,13 +371,13 @@ object DmGestion_Data: TDmGestion_Data
       #9'  Else'
       #9'     Begin'
       
-        #9#9#9' SET   @NumFactura = (SELECT TOP 1 NUMERO  FROM CABEZA_FACTUR' +
-        'A   WITH (NOLOCK) )+1;'
-      #9#9#9' SET   @FechaFac   = GETDATE();'
+        '           SET   @NumFactura = ( SELECT TOP 1 NUMERO  FROM CABEZ' +
+        'A_FACTURA   WITH (NOLOCK) ORDER BY NUMERO DESC )+1;'
+      '           SET   @FechaFac   = GETDATE();'
       
-        #9#9#9' SELECT @TipoFactura AS TIPO_FACTURA ,@NumFactura AS NUM_FACT' +
-        'URA, @FechaFac AS FEC_FACTURA'
-      #9#9' End;')
+        '           SELECT @TipoFactura AS TIPO_FACTURA ,@NumFactura AS N' +
+        'UM_FACTURA, @FechaFac AS FEC_FACTURA'
+      #9#9'    End;')
     Left = 384
     Top = 344
     object ValidaNumeroFacturaTIPO_FACTURA: TStringField
@@ -501,5 +500,49 @@ object DmGestion_Data: TDmGestion_Data
       #9'END CATCH')
     Left = 144
     Top = 352
+  end
+  object QryConsultaProductosXCategoria: TADOQuery
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = 'AP023'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      ''
+      'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      
+        #9'SELECT *  , FORMAT ( VALOR,'#39'##,###'#39') AS VALOR_MOSTRAR  FROM PRO' +
+        'DUCTOS  WITH (NOLOCK) WHERE CATEGORIA = :"AP023"'
+      #9'ORDER BY NOMBRE_PRODUCTO ASC')
+    Left = 360
+    Top = 16
+    object QryConsultaProductosXCategoriaPRODUCTO: TStringField
+      FieldName = 'PRODUCTO'
+      Size = 15
+    end
+    object QryConsultaProductosXCategoriaCATEGORIA: TStringField
+      FieldName = 'CATEGORIA'
+      Size = 5
+    end
+    object QryConsultaProductosXCategoriaNOMBRE_PRODUCTO: TStringField
+      FieldName = 'NOMBRE_PRODUCTO'
+      Size = 800
+    end
+    object QryConsultaProductosXCategoriaVALOR: TFloatField
+      FieldName = 'VALOR'
+    end
+    object QryConsultaProductosXCategoriaVALOR_MOSTRAR: TWideStringField
+      FieldName = 'VALOR_MOSTRAR'
+      ReadOnly = True
+      Size = 4000
+    end
+  end
+  object DsConsultaProductosXCategoria: TDataSource
+    DataSet = QryConsultaProductosXCategoria
+    Left = 432
+    Top = 16
   end
 end
