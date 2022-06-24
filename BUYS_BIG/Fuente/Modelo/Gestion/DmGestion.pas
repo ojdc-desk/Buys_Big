@@ -63,6 +63,14 @@ type
     ValidaNumeroFacturaNUM_FACTURA: TBCDField;
     ValidaNumeroFacturaFEC_FACTURA: TDateTimeField;
     QrySuplente: TADOQuery;
+    QryTrazaCliente: TADOQuery;
+    DsTrazaCliente: TDataSource;
+    QryTrazaClienteITEM: TLargeintField;
+    QryTrazaClienteNUMERO_FACTURA: TStringField;
+    QryTrazaClienteFECHA_FACTURA: TDateTimeField;
+    QryTrazaClienteCANT_PRODUCTOS: TIntegerField;
+    QryTrazaClienteVALOR_TOTAL_2: TWideStringField;
+    QryEliminaTraza: TADOQuery;
   private
     { Private declarations }
   public
@@ -79,6 +87,8 @@ type
     Public Procedure ProdcutosDisponibles(Factura:Currency);
 
     Public Function GenerarNumeroFactura(Datos:TControl_Gestion):Boolean;
+
+    Public Function EliminarTraza(Cliente,Factura:Currency):Boolean;
 
     { Public declarations }
   end;
@@ -213,6 +223,7 @@ begin
 end;
 
 //*** Registro de un producto en la factura.
+
 function TDmGestion_Data.FacturarProducto(Datos: TControl_Gestion): Boolean;
 begin
        Try
@@ -280,7 +291,24 @@ begin
        End;
 end;
 
+//*** Elimina la trazabilidad de una factura.
+function TDmGestion_Data.EliminarTraza(Cliente, Factura: Currency): Boolean;
+begin
+   Try
+     DmConexion.AdoConexionBd.BeginTrans;
 
+     QryEliminaTraza.Close;
+     QryEliminaTraza.Parameters[0].Value := Cliente;
+     QryEliminaTraza.Parameters[1].Value := Factura;
+     QryEliminaTraza.Open;
+
+      DmConexion.AdoConexionBd.CommitTrans;
+      Result   :=  True;
+   Except
+      Result   :=  False;
+      DmConexion.AdoConexionBd.RollbackTrans;
+   End;
+end;
 
 
 

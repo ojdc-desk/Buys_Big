@@ -403,4 +403,103 @@ object DmGestion_Data: TDmGestion_Data
     Left = 64
     Top = 304
   end
+  object QryTrazaCliente: TADOQuery
+    Connection = DmConexion.AdoConexionBd
+    CursorType = ctStatic
+    Parameters = <
+      item
+        Name = '10'
+        Attributes = [paSigned]
+        DataType = ftBCD
+        Precision = 18
+        Size = 19
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        '  SELECT   ROW_NUMBER() OVER(PARTITION BY T0.CLIENTE ORDER BY T0' +
+        '.NUMERO DESC) AS '#39'ITEM'#39
+      '  , RIGHT('#39'0000'#39' + Ltrim(Rtrim(T0.NUMERO )),4)'
+      
+        '  AS NUMERO_FACTURA, FECHA AS FECHA_FACTURA,COUNT(T1.NUMERO_ITEM' +
+        ')   AS CANT_PRODUCTOS'
+      
+        '  , FORMAT (SUM(T1.VALOR*T1.CANTIDAD),'#39'##,###'#39')   AS VALOR_TOTAL' +
+        '_2 FROM CABEZA_FACTURA  T0'
+      '  INNER JOIN DETALLE_FACTURA T1 ON T0.NUMERO = T1.NUMERO'
+      '  WHERE CLIENTE =:"10"'
+      '  GROUP BY T0.CLIENTE ,T0.NUMERO , FECHA , TOTAL'
+      '  ORDER BY FECHA DESC')
+    Left = 144
+    Top = 304
+    object QryTrazaClienteITEM: TLargeintField
+      FieldName = 'ITEM'
+      ReadOnly = True
+    end
+    object QryTrazaClienteNUMERO_FACTURA: TStringField
+      FieldName = 'NUMERO_FACTURA'
+      ReadOnly = True
+      Size = 4
+    end
+    object QryTrazaClienteFECHA_FACTURA: TDateTimeField
+      FieldName = 'FECHA_FACTURA'
+    end
+    object QryTrazaClienteCANT_PRODUCTOS: TIntegerField
+      FieldName = 'CANT_PRODUCTOS'
+      ReadOnly = True
+    end
+    object QryTrazaClienteVALOR_TOTAL_2: TWideStringField
+      FieldName = 'VALOR_TOTAL_2'
+      ReadOnly = True
+      Size = 4000
+    end
+  end
+  object DsTrazaCliente: TDataSource
+    DataSet = QryTrazaCliente
+    Left = 192
+    Top = 304
+  end
+  object QryEliminaTraza: TADOQuery
+    Connection = DmConexion.AdoConexionBd
+    Parameters = <
+      item
+        Name = '10'
+        Size = -1
+        Value = Null
+      end
+      item
+        Name = '3'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      '  Declare @Num_IdCliente Numeric(18,0);'
+      '  Declare @NumFactura    Numeric(18,0);'
+      ''
+      '  Set @Num_IdCliente = :"10";'
+      '  Set @NumFactura    = :"3";'
+      '  '
+      '    '
+      '   '
+      
+        '   IF (SELECT COUNT(*) FROM CABEZA_FACTURA  WHERE NUMERO = @NumF' +
+        'actura AND CLIENTE = @Num_IdCliente ) > 0'
+      #9'   BEGIN TRY'
+      #9#9' BEGIN TRANSACTION '
+      #9#9#9'  SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED'
+      #9#9'     '
+      #9#9#9#9' DELETE  FROM DETALLE_FACTURA WHERE NUMERO = @NumFactura'
+      
+        #9#9#9#9' DELETE  FROM CABEZA_FACTURA  WHERE NUMERO = @NumFactura AND' +
+        ' CLIENTE = @Num_IdCliente  '
+      ''
+      #9#9' COMMIT TRANSACTION '
+      #9#9' END TRY'
+      #9'BEGIN CATCH'
+      #9#9' ROLLBACK TRANSACTION '
+      #9' '
+      #9'END CATCH')
+    Left = 144
+    Top = 352
+  end
 end

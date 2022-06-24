@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Data.Win.ADODB, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.DBCtrls, Vcl.WinXPickers , Control_Gestion,
-  Vcl.Grids, Vcl.DBGrids, DmGestion, DmConnectionDB;
+  Vcl.Grids, Vcl.DBGrids, DmGestion, DmConnectionDB, Vcl.Menus;
 
 type
   TViewGestion = class(TForm)
@@ -51,7 +51,6 @@ type
     BitBtn7: TBitBtn;
     BitBtn4: TBitBtn;
     DBGrid1: TDBGrid;
-    BitBtn8: TBitBtn;
     BitBtn9: TBitBtn;
     Edit8: TEdit;
     DBLookupComboBox4: TDBLookupComboBox;
@@ -68,6 +67,16 @@ type
     Label20: TLabel;
     Label21: TLabel;
     Label22: TLabel;
+    BitBtn8: TBitBtn;
+    TabSheet4: TTabSheet;
+    DBGrid2: TDBGrid;
+    Edit11: TEdit;
+    Edit12: TEdit;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    PopupMenu1: TPopupMenu;
+    EliminarFactura1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
@@ -90,6 +99,11 @@ type
     procedure DBLookupComboBox1Exit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure DBLookupComboBox4Exit(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
+    procedure Edit11Exit(Sender: TObject);
+    procedure BitBtn8Click(Sender: TObject);
+    procedure PopupMenu1Popup(Sender: TObject);
+    procedure EliminarFactura1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -145,6 +159,7 @@ begin
      PageControl1.Pages[1].TabVisible := True;
      PageControl1.Pages[2].TabVisible := False;
      PageControl1.Pages[3].TabVisible := False;
+     PageControl1.Pages[4].TabVisible := False;
 end;
 //------- Habilita la seccion de Facturacion
 procedure TViewGestion.BitBtn3Click(Sender: TObject);
@@ -153,6 +168,7 @@ begin
      PageControl1.Pages[1].TabVisible := False;
      PageControl1.Pages[2].TabVisible := False;
      PageControl1.Pages[3].TabVisible := True;
+     PageControl1.Pages[4].TabVisible := False;
 end;
 //------- Habilita la seccion de Prodcutos
 procedure TViewGestion.BitBtn1Click(Sender: TObject);
@@ -161,6 +177,16 @@ begin
      PageControl1.Pages[1].TabVisible := False;
      PageControl1.Pages[2].TabVisible := True;
      PageControl1.Pages[3].TabVisible := False;
+     PageControl1.Pages[4].TabVisible := False;
+end;
+//------- Habilita la seccion de TRaza por cliente
+procedure TViewGestion.BitBtn8Click(Sender: TObject);
+begin
+     PageControl1.Pages[0].TabVisible := False;
+     PageControl1.Pages[1].TabVisible := False;
+     PageControl1.Pages[2].TabVisible := False;
+     PageControl1.Pages[3].TabVisible := False;
+     PageControl1.Pages[4].TabVisible := True;
 end;
 //------- Habilita la seccion de Prodcutos
 procedure TViewGestion.LimpiaClientes;
@@ -338,6 +364,13 @@ begin
      DBLookupComboBox3.KeyValue := Null;
      BitBtn7.Caption := 'REGISTRAR PRODUCTO';
 end;
+procedure TViewGestion.PageControl1Change(Sender: TObject);
+begin
+
+end;
+
+
+
 // *** Busqueda de un producto.
 procedure TViewGestion.BitBtn4Click(Sender: TObject);
 begin
@@ -413,6 +446,8 @@ end;
 
 
 
+
+
 //***    Facturacion  ***//
 
 
@@ -484,6 +519,8 @@ begin
       End
 end;
 
+
+
 //------- Aliementa los datos  con el producto seleccionado.
 procedure TViewGestion.DBLookupComboBox4Exit(Sender: TObject);
 begin
@@ -530,7 +567,7 @@ begin
      Begin
           DmGestion.ConsultaDetalle(Factura);
           DmGestion.ProdcutosDisponibles(Factura);
-          Edit9.Text := EmptyStr;
+          Edit8.Text := EmptyStr;
           DBLookupComboBox4.SetFocus;
      End
        Else
@@ -545,14 +582,84 @@ end;
 
 
 
+// ******** TRAZABILIDAD DE COMPRAS  ****** //
+
+
+//**** Consulta el cliente y su informacion de compras.
+procedure TViewGestion.Edit11Exit(Sender: TObject);
+begin
+    // *** Consulta la existencia del cliente y las compras realziadad (Facturas).
+ If (Trim(Edit11.Text) <> EmptyStr ) Then
+  Begin
+      Control_Gestion := TControl_Gestion.Create;
+      Try
+          If ( Control_Gestion.ValidarClienteBD(StrToCurrDef(Trim(Edit1.Text),99999)) <> EmptyStr ) Then
+           Begin
+
+              Edit11.Text := CurrToStr(Control_Gestion.Clie_Identificacion);
+              Edit12.Text := Control_Gestion.Clie_Nombre;
+
+              DmGestion.QryTrazaCliente.Close;
+              DmGestion.QryTrazaCliente.Parameters[0].Value := Control_Gestion.Clie_Identificacion;
+              DmGestion.QryTrazaCliente.Open;
+
+              If ( DmGestion.QryTrazaCliente.RecordCount = 0  ) Then
+               Begin
+                   MessageDlg('Cliente sin trazabilidad de facturacion.', mtInformation,[mbOk], 0, mbOk);
+                   Exit;
+               End;
+           End
+             Else
+                Begin
+                    MessageDlg('El cliente no esta registrado en la base de datos.', mtInformation,[mbOk], 0, mbOk);
+                    Exit;
+                End;
+      Finally
+        Control_Gestion.Free;
+      End;
+  End
 
 
 
+end;
+//****** Validacion para Apertura de la opcioon del    PopupMenu
+procedure TViewGestion.PopupMenu1Popup(Sender: TObject);
+begin
+    DmGestion.QryTrazaCliente.Close;
+    DmGestion.QryTrazaCliente.Parameters[0].Value := Control_Gestion.Clie_Identificacion;
+    DmGestion.QryTrazaCliente.Open;
+    { Debe existir minimo una factura para poder habilitar la opcion de eliminacion
+     de lo contrario se oculta la opcion }
+    If ( DmGestion.QryTrazaCliente.RecordCount = 0  ) Then
+     Begin
+         EliminarFactura1.Visible := False;
+     End
+       Else
+          Begin
+              EliminarFactura1.Visible := True;
+          End;
+end;
 
+//**** Eliminacion de una factura.
+procedure TViewGestion.EliminarFactura1Click(Sender: TObject);
+begin
 
+    If ( DmGestion.EliminarTraza( Control_Gestion.Clie_Identificacion ,
+    StrToCurr(DmGestion.QryTrazaClienteNUMERO_FACTURA.Value) ) = True )  Then
+      Begin
+          DmGestion.QryTrazaCliente.Close;
+          DmGestion.QryTrazaCliente.Parameters[0].Value := Control_Gestion.Clie_Identificacion;
+          DmGestion.QryTrazaCliente.Open;
 
-
-
+          MessageDlg('Factura eliminada con exito', mtInformation,[mbOk], 0, mbOk);
+          Exit;
+      End
+        Else
+            Begin
+               MessageDlg('No fue posible eliminar la factura.', mtInformation,[mbOk], 0, mbOk);
+               Exit;
+            End;
+end;
 
 
 
