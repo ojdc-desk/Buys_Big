@@ -256,13 +256,14 @@ object ViewGestion: TViewGestion
   Position = poMainFormCenter
   OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 996
-    Height = 50
+    Height = 49
     Align = alTop
     Caption = 'SISTEMA DE GESTION  "BUYS BIG"'
     Color = 10392890
@@ -274,17 +275,18 @@ object ViewGestion: TViewGestion
     ParentBackground = False
     ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 859
   end
   object Panel2: TPanel
     Left = 0
-    Top = 50
+    Top = 49
     Width = 185
-    Height = 486
+    Height = 487
     Align = alLeft
     Color = 10392890
     ParentBackground = False
     TabOrder = 1
+    ExplicitTop = 9
+    ExplicitHeight = 527
     object BitBtn2: TBitBtn
       Left = 3
       Top = 20
@@ -1063,20 +1065,21 @@ object ViewGestion: TViewGestion
   end
   object Panel3: TPanel
     Left = 185
-    Top = 50
+    Top = 49
     Width = 811
-    Height = 486
+    Height = 487
     Align = alClient
     TabOrder = 2
-    ExplicitTop = 47
-    ExplicitWidth = 674
-    ExplicitHeight = 371
+    ExplicitLeft = 41
+    ExplicitTop = 9
+    ExplicitWidth = 955
+    ExplicitHeight = 527
     object PageControl1: TPageControl
       Left = 1
       Top = 1
       Width = 809
-      Height = 484
-      ActivePage = TabSheet1
+      Height = 485
+      ActivePage = TabSheet3
       Align = alClient
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1085,12 +1088,12 @@ object ViewGestion: TViewGestion
       Font.Style = [fsItalic]
       ParentFont = False
       TabOrder = 0
-      ExplicitLeft = 0
-      ExplicitTop = 49
-      ExplicitWidth = 672
-      ExplicitHeight = 369
+      ExplicitWidth = 953
+      ExplicitHeight = 525
       object TabSheet5: TTabSheet
         Caption = 'INICIO'
+        ExplicitWidth = 945
+        ExplicitHeight = 492
         object Label8: TLabel
           Left = 208
           Top = 141
@@ -1101,10 +1104,12 @@ object ViewGestion: TViewGestion
       end
       object TabSheet1: TTabSheet
         Caption = 'REGISTRO Y/O ACTUALIZACION DE CLIENTES'
+        ExplicitWidth = 945
+        ExplicitHeight = 492
         object Label1: TLabel
           Left = 3
           Top = 44
-          Width = 214
+          Width = 203
           Height = 18
           Caption = 'IDENTIFICACI'#211'N DEL CLIENTE'
           Font.Charset = ANSI_CHARSET
@@ -1117,7 +1122,7 @@ object ViewGestion: TViewGestion
         object Label2: TLabel
           Left = 232
           Top = 40
-          Width = 497
+          Width = 153
           Height = 18
           Caption = 'NOMBRE DEL CLIENTE'
           Font.Charset = ANSI_CHARSET
@@ -1201,7 +1206,7 @@ object ViewGestion: TViewGestion
         end
         object Edit1: TEdit
           Left = 3
-          Top = 64
+          Top = 68
           Width = 216
           Height = 26
           Font.Charset = ANSI_CHARSET
@@ -1242,7 +1247,7 @@ object ViewGestion: TViewGestion
           Font.Height = -15
           Font.Name = 'Roboto'
           Font.Style = [fsItalic]
-          KeyField = 'CLAVE'
+          KeyField = 'NUM_CIUDAD'
           ListField = 'NOMBRE_CIUDAD'
           ListSource = DmGestion_Data.DsCiudades
           ParentFont = False
@@ -1320,8 +1325,8 @@ object ViewGestion: TViewGestion
           Top = 180
           Width = 174
           Height = 26
-          Date = 44688.000000000000000000
-          DateFormat = 'dd/MM/yyyy'
+          Date = 36161.000000000000000000
+          DateFormat = 'yyyy-MM-dd'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -16
@@ -1354,6 +1359,8 @@ object ViewGestion: TViewGestion
         Font.Style = [fsItalic]
         ImageIndex = 1
         ParentFont = False
+        ExplicitWidth = 945
+        ExplicitHeight = 492
         object Label10: TLabel
           Left = 16
           Top = 78
@@ -1462,6 +1469,9 @@ object ViewGestion: TViewGestion
       object TabSheet3: TTabSheet
         Caption = 'GENERACION DE FACTURA'
         ImageIndex = 2
+        ExplicitLeft = 36
+        ExplicitTop = 19
+        ExplicitHeight = 492
         object Label14: TLabel
           Left = 3
           Top = 5
@@ -1493,7 +1503,7 @@ object ViewGestion: TViewGestion
         object Label18: TLabel
           Left = 607
           Top = 104
-          Width = 90
+          Width = 73
           Height = 18
           Caption = 'CANTIDAD'
         end
@@ -1506,6 +1516,28 @@ object ViewGestion: TViewGestion
           AutoSize = False
           Caption = 'DETALLA DE SERVICIOS'
         end
+        object Label20: TLabel
+          Left = 672
+          Top = 3
+          Width = 58
+          Height = 18
+          Caption = 'Factura :'
+        end
+        object Label21: TLabel
+          Left = 736
+          Top = 3
+          Width = 36
+          Height = 18
+          Caption = '0000'
+        end
+        object Label22: TLabel
+          Left = 704
+          Top = 430
+          Width = 94
+          Height = 18
+          Alignment = taRightJustify
+          Caption = '//'
+        end
         object DBGrid1: TDBGrid
           Left = 3
           Top = 184
@@ -1513,7 +1545,7 @@ object ViewGestion: TViewGestion
           Height = 232
           DataSource = DmGestion_Data.DsDetalleFactura
           FixedColor = clSkyBlue
-          TabOrder = 0
+          TabOrder = 6
           TitleFont.Charset = ANSI_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -15
@@ -1523,31 +1555,65 @@ object ViewGestion: TViewGestion
             item
               Alignment = taCenter
               Expanded = False
+              FieldName = 'ITEM'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Roboto'
+              Font.Style = [fsItalic]
+              Title.Alignment = taCenter
+              Width = 41
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
               FieldName = 'NOMBRE_PRODUCTO'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Roboto'
+              Font.Style = [fsItalic]
               Title.Alignment = taCenter
               Title.Caption = 'PRODUCTO'
-              Width = 453
+              Width = 448
               Visible = True
             end
             item
               Alignment = taCenter
               Expanded = False
               FieldName = 'CANTIDAD'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Roboto'
+              Font.Style = [fsItalic]
               Title.Alignment = taCenter
-              Width = 89
+              Title.Caption = 'CANT'
+              Width = 58
               Visible = True
             end
             item
               Alignment = taCenter
               Expanded = False
-              FieldName = 'VALOR_PPRODUCTO'
+              FieldName = 'VALOR_UNIDAD'
+              Font.Charset = ANSI_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Roboto'
+              Font.Style = [fsItalic]
               Title.Alignment = taCenter
-              Title.Caption = 'VALOR'
-              Width = 175
+              Title.Caption = 'V/U'
+              Width = 95
               Visible = True
             end
             item
+              Alignment = taCenter
               Expanded = False
+              FieldName = 'VALOR_TOTAL'
+              Title.Alignment = taCenter
+              Title.Caption = 'V / TOTAL'
+              Width = 104
               Visible = True
             end>
         end
@@ -1558,7 +1624,7 @@ object ViewGestion: TViewGestion
           Height = 26
           Caption = 'GENERAR FACTURA'
           Enabled = False
-          TabOrder = 1
+          TabOrder = 7
         end
         object BitBtn9: TBitBtn
           Left = 703
@@ -1573,7 +1639,7 @@ object ViewGestion: TViewGestion
           Font.Name = 'Roboto Bk'
           Font.Style = [fsItalic]
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 5
           OnClick = BitBtn9Click
         end
         object Edit8: TEdit
@@ -1583,7 +1649,7 @@ object ViewGestion: TViewGestion
           Height = 26
           Enabled = False
           NumbersOnly = True
-          TabOrder = 3
+          TabOrder = 4
         end
         object DBLookupComboBox4: TDBLookupComboBox
           Left = 3
@@ -1593,8 +1659,9 @@ object ViewGestion: TViewGestion
           Enabled = False
           KeyField = 'PRODUCTO'
           ListField = 'NOMBRE_PRODUCTO'
-          ListSource = DmGestion_Data.DsProductos
-          TabOrder = 4
+          ListSource = DmGestion_Data.DsProductosDisponibles
+          TabOrder = 3
+          OnExit = DBLookupComboBox4Exit
         end
         object Edit9: TEdit
           Left = 3
@@ -1602,7 +1669,7 @@ object ViewGestion: TViewGestion
           Width = 214
           Height = 26
           NumbersOnly = True
-          TabOrder = 5
+          TabOrder = 0
           OnExit = Edit9Exit
         end
         object Edit10: TEdit
@@ -1611,7 +1678,7 @@ object ViewGestion: TViewGestion
           Width = 663
           Height = 26
           ReadOnly = True
-          TabOrder = 6
+          TabOrder = 1
         end
         object DateTimePicker1: TDateTimePicker
           Left = 672
@@ -1620,7 +1687,7 @@ object ViewGestion: TViewGestion
           Height = 26
           Date = 44689.000000000000000000
           Time = 0.051120729163812940
-          TabOrder = 7
+          TabOrder = 2
         end
       end
     end

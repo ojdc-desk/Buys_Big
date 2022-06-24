@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Data.Win.ADODB, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.DBCtrls, Vcl.WinXPickers , Control_Gestion,
-  Vcl.Grids, Vcl.DBGrids;
+  Vcl.Grids, Vcl.DBGrids, DmGestion, DmConnectionDB;
 
 type
   TViewGestion = class(TForm)
@@ -65,6 +65,9 @@ type
     Label18: TLabel;
     Timer1: TTimer;
     Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
@@ -85,161 +88,168 @@ type
     Procedure ConsultaDepartamento;
     Procedure ConsultaMunicipio;
     procedure DBLookupComboBox1Exit(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure DBLookupComboBox4Exit(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
   end;
 
-   var ViewGestion     : TViewGestion;
-       Control_Gestion : TControl_Gestion;
+   var ViewGestion        : TViewGestion;
+       Control_Gestion    : TControl_Gestion;
+       DmGestion          : TDmGestion_Data;
+       DmConnectionDB     : TDmConexion;
+
+
+       Factura : Currency;
 implementation
 
 {$R *.dfm}
 
-uses DmGestion; // Control_Gestion;
-
+//***    Inicio  ***//
+procedure TViewGestion.FormCreate(Sender: TObject);
+begin
+    //-------- Se instancian la conexion t el modelo de datos.
+    DmConnectionDB   := TDmConexion.Create(Nil);
+    DmGestion        := TDmGestion_Data.Create(Nil);
+    Control_Gestion  := TControl_Gestion.Create;
+    DatePicker1.Date := Now();
+end;
+//------------------ Activacion del Formulario
 procedure TViewGestion.FormActivate(Sender: TObject);
 begin
-   //-------- Acciones de apertura de la Vista
+   //-------- Acciones de apertura de la Vista, se posiciona en la vista principal.
    PageControl1.Pages[0].TabVisible := True;
    PageControl1.Pages[1].TabVisible := False;
    PageControl1.Pages[2].TabVisible := False;
    PageControl1.Pages[3].TabVisible := False;
-   //-------  Actualiza la Hora en todo momento
 end;
-
 //*** Muestra la  fecha y hora delsistema.
 procedure TViewGestion.Timer1Timer(Sender: TObject);
 Var Hs : String;
 begin
+     //------------- Formate la hora actual y la  muetra en tiempo real.
      DateTimeToString(Hs, 'dddd, d ''de'' mmmm ''de'' yyyy  '' '' hh:nn:ss am/pm ''   ',Now);
      Label8.Caption :=  UpperCase(Hs);
 end;
-
+//*** Acciones de Cierre del formulario desde la x superior del formulario
 procedure TViewGestion.FormClose(Sender: TObject; var Action: TCloseAction);
-begin  //  Acciones de Cierre del formulario desde la x superior del formulario
-   Action := TCloseAction.caFree;
+begin
+    Action := TCloseAction.caFree;
 end;
-
+//------- Habilita la seccion de Clientes
 procedure TViewGestion.BitBtn2Click(Sender: TObject);
-begin  // Habilita la seccion de Clientes
-   PageControl1.Pages[0].TabVisible := False;
-   PageControl1.Pages[1].TabVisible := True;
-   PageControl1.Pages[2].TabVisible := False;
-   PageControl1.Pages[3].TabVisible := False;
+begin
+     PageControl1.Pages[0].TabVisible := False;
+     PageControl1.Pages[1].TabVisible := True;
+     PageControl1.Pages[2].TabVisible := False;
+     PageControl1.Pages[3].TabVisible := False;
 end;
+//------- Habilita la seccion de Facturacion
 procedure TViewGestion.BitBtn3Click(Sender: TObject);
-begin // Habilita la seccion de Facturacion
-   PageControl1.Pages[0].TabVisible := False;
-   PageControl1.Pages[1].TabVisible := False;
-   PageControl1.Pages[2].TabVisible := False;
-   PageControl1.Pages[3].TabVisible := True;
+begin
+     PageControl1.Pages[0].TabVisible := False;
+     PageControl1.Pages[1].TabVisible := False;
+     PageControl1.Pages[2].TabVisible := False;
+     PageControl1.Pages[3].TabVisible := True;
 end;
+//------- Habilita la seccion de Prodcutos
 procedure TViewGestion.BitBtn1Click(Sender: TObject);
-begin  // Habilita la seccion de Prodcutos
-   PageControl1.Pages[0].TabVisible := False;
-   PageControl1.Pages[1].TabVisible := False;
-   PageControl1.Pages[2].TabVisible := True;
-   PageControl1.Pages[3].TabVisible := False;
+begin
+     PageControl1.Pages[0].TabVisible := False;
+     PageControl1.Pages[1].TabVisible := False;
+     PageControl1.Pages[2].TabVisible := True;
+     PageControl1.Pages[3].TabVisible := False;
 end;
+//------- Habilita la seccion de Prodcutos
 procedure TViewGestion.LimpiaClientes;
-begin  // Habilita la seccion de Prodcutos
-   Edit1.Enabled := True;
-   Edit2.Text    := EmptyStr;
-   Edit3.Text    := EmptyStr;
-   Edit4.Text    := EmptyStr;
-   ComboBox1.ItemIndex := -1;
-   DBLookupComboBox1.KeyValue := Null;
-   DBLookupComboBox2.KeyValue := Null;
-   BitBtn5.Caption := 'REGISTRAR CLIENTE';
-end;
-procedure TViewGestion.LimpiaProductos;
-begin  // Habilita la seccion de Prodcutos
-   Edit5.Enabled := True;
-   Edit6.Text := EmptyStr;
-   Edit7.Text := EmptyStr;
-   DBLookupComboBox3.KeyValue := Null;
-   BitBtn7.Caption := 'REGISTRAR PRODUCTO';
+begin
+     Edit1.Enabled := True;
+     Edit2.Text    := EmptyStr;
+     Edit3.Text    := EmptyStr;
+     Edit4.Text    := EmptyStr;
+     ComboBox1.ItemIndex := -1;
+     DBLookupComboBox1.KeyValue := Null;
+     DBLookupComboBox2.KeyValue := Null;
+     BitBtn5.Caption := 'REGISTRAR CLIENTE';
 end;
 
 
-// **** Adicion de la consulta que lista losdepartamentos de la tabladereferencia.
+
+//***    Clientes  ***//
+
+
+// **** Limpiar el formulario de registro de clientes.
+procedure TViewGestion.BitBtn6Click(Sender: TObject);
+begin
+    LimpiaClientes;
+end;
+// **** Ejecuta la consulta de los deparamentos, relacionados en la base de datos.
 procedure TViewGestion.ConsultaDepartamento;
 begin
-    DmGestion_Data.QryDepartamentos.Close;
-    DmGestion_Data.QryDepartamentos.Open;
+    DmGestion.QryDepartamentos.Close;
+    DmGestion.QryDepartamentos.Open;
 end;
-// *** Consulta los minucipios asociados  a un departamento.
+// **** Ejecuta la consulta de los municipios asociados a un departamento, relacionados en la base de datos.
 procedure TViewGestion.ConsultaMunicipio;
 begin
-   If DBLookupComboBox1.KeyValue <> Null Then
-    Begin
-       DmGestion_Data.QryCiudades.Close;
-       DmGestion_Data.QryCiudades.Parameters[0].Value :=  DBLookupComboBox1.KeyValue;
-       DmGestion_Data.QryCiudades.Open;
-    End;
+    If ( DBLookupComboBox1.KeyValue <> Null ) then
+     Begin
+        DmGestion.QryCiudades.Close;
+        DmGestion.QryCiudades.Parameters[0].Value := DBLookupComboBox1.KeyValue;
+        DmGestion.QryCiudades.Open;
+     End;
 end;
-
+// **** Consulta los minucipios asociados  a un departamento.
 procedure TViewGestion.DBLookupComboBox1Exit(Sender: TObject);
 begin
     ConsultaMunicipio;
 end;
 
-// Limpiar el formulario de registro de clientes.
-procedure TViewGestion.BitBtn6Click(Sender: TObject);
-begin
-   LimpiaClientes;
-end;
-
-// ***** Validacion de la Existencia de un cliente en la BD
+// **** Validacion de la Existencia de un cliente en la BD
 procedure TViewGestion.Edit1Exit(Sender: TObject);
 begin
  If (Trim(Edit1.Text) <> EmptyStr ) Then
   Begin
-    Control_Gestion := TControl_Gestion.Create;
-    Try
-        ConsultaDepartamento;
+      Control_Gestion := TControl_Gestion.Create;
+      Try
+          ConsultaDepartamento;
+          ConsultaMunicipio;
+          If ( Control_Gestion.ValidarClienteBD(StrToCurrDef(Trim(Edit1.Text),99999)) <> EmptyStr ) Then
+           Begin
+              BitBtn5.Caption := 'ACTUALIZAR CLIENTE';
+              Edit1.Enabled := False;
 
-        If ( Control_Gestion.ValidarClienteBD(StrToCurrDef(Trim(Edit1.Text),99999)) <> EmptyStr ) Then
-         Begin
-             BitBtn5.Caption := 'ACTUALIZAR CLIENTE';
-             Edit1.Enabled := False;
+              Edit1.Text := CurrToStr(Control_Gestion.Clie_Identificacion);
+              Edit2.Text := Control_Gestion.Clie_Nombre;
+              Edit3.Text := CurrToStr(Control_Gestion.Clie_Telefono);
+              Edit4.Text := Control_Gestion.Clie_Direccion;
 
-             Edit1.Text := CurrToStr(Control_Gestion.Clie_Identificacion);
-             Edit2.Text := Control_Gestion.Clie_Nombre;
-             Edit3.Text := CurrToStr(Control_Gestion.Clie_Telefono);
-             Edit4.Text := Control_Gestion.Clie_Direccion;
-
-             If ( Control_Gestion.Clie_Sexo = 'F' ) Then
+              If ( Control_Gestion.Clie_Sexo = 'F' ) Then
               Begin
-                  ComboBox1.ItemIndex := 0;
+              ComboBox1.ItemIndex := 0;
               End Else Begin  ComboBox1.ItemIndex := 1; End;
 
+              ConsultaDepartamento;
               DBLookupComboBox1.KeyValue := Control_Gestion.Clie_Departamento;
 
               ConsultaMunicipio;
+              DBLookupComboBox2.KeyValue := Control_Gestion.Clie_Municipio;
 
-              DBLookupComboBox2.KeyValue := Control_Gestion.Clie_Departamento + Control_Gestion.Clie_Municipio;
-
-              DatePicker1.Date           := Control_Gestion.Clie_FechaNacimiento;
+              //DatePicker1.Date           := StrToDate(Control_Gestion.Clie_FechaNacimiento);
               MessageDlg('El cliente ya esta registrado, si desea puede actualizar datos', mtInformation,[mbOk], 0, mbOk); Exit;
-         End
-           Else
-              Begin
-                  Edit1.Enabled := True; // Edit1.Text := EmptyStr;
-                  LimpiaClientes;
-              End;
-
-
-    Finally
-      Control_Gestion.Free;
-
-
-    End;
+           End
+             Else
+                Begin
+                    Edit1.Enabled := True; // Edit1.Text := EmptyStr;
+                    LimpiaClientes;
+                End;
+      Finally
+        Control_Gestion.Free;
+      End;
   End
 end;
-
 // *** Aciones y validaciones para el registro  de un cliente.
 procedure TViewGestion.BitBtn5Click(Sender: TObject);
 begin
@@ -294,7 +304,7 @@ begin
        Control_Gestion.Clie_Departamento    := DBLookupComboBox1.KeyValue;
        Control_Gestion.Clie_Municipio       := Copy(DBLookupComboBox2.KeyValue,3,6);
        Control_Gestion.Clie_Telefono        := StrToCurrDef(Edit3.Text,999);
-       Control_Gestion.Clie_FechaNacimiento := DatePicker1.Date;
+       Control_Gestion.Clie_FechaNacimiento := DateToStr(DatePicker1.Date);
        Control_Gestion.Clie_Direccion       := UpperCase(Edit4.Text);
 
        If ( Control_Gestion.RegistrarClienteBD(BitBtn5.Caption) <> 'Error.' ) Then
@@ -311,6 +321,22 @@ begin
     Finally
       Control_Gestion.Free;
     End;
+end;
+
+
+
+
+//***    Productos  ***//
+
+
+//------- Limpia la seccion de Prodcutos
+procedure TViewGestion.LimpiaProductos;
+begin
+     Edit5.Enabled := True;
+     Edit6.Text := EmptyStr;
+     Edit7.Text := EmptyStr;
+     DBLookupComboBox3.KeyValue := Null;
+     BitBtn7.Caption := 'REGISTRAR PRODUCTO';
 end;
 // *** Busqueda de un producto.
 procedure TViewGestion.BitBtn4Click(Sender: TObject);
@@ -343,9 +369,6 @@ begin
     End;
   End
 end;
-
-
-
 // **** Registro y/o Actualizacion de un producto.
 procedure TViewGestion.BitBtn7Click(Sender: TObject);
 begin
@@ -387,62 +410,145 @@ begin
     End;
 end;
 
+
+
+
+//***    Facturacion  ***//
+
+
+
+
+
+
 //**** Ingrese de la identificacion del clinete a facturear.
 procedure TViewGestion.Edit9Exit(Sender: TObject);
 begin
- If (Trim(Edit9.Text) <> EmptyStr ) Then
-  Begin
-    Control_Gestion := TControl_Gestion.Create;
-    Try
-      If ( Control_Gestion.ValidarClienteBD(StrToCurrDef(Trim(Edit9.Text),99999)) <> EmptyStr ) Then
-       Begin
-           Edit9.Text  := CurrToStr(Control_Gestion.Clie_Identificacion);
-           Edit10.Text := Control_Gestion.Clie_Nombre;
+     If (Trim(Edit9.Text) <> EmptyStr ) Then
+      Begin
+        Control_Gestion := TControl_Gestion.Create;
+        Try
+          If ( Control_Gestion.ValidarClienteBD(StrToCurrDef(Trim(Edit9.Text),99999)) <> EmptyStr ) Then
+           Begin
+               Edit9.Text  := CurrToStr(Control_Gestion.Clie_Identificacion);
+               Edit10.Text := Control_Gestion.Clie_Nombre;
+               DBLookupComboBox4.Enabled := True;  Edit8.Enabled     := True;
+               BitBtn8.Enabled           := True;  BitBtn9.Enabled   := True;
 
-           DBLookupComboBox4.Enabled := True;  Edit8.Enabled             := True;
-           BitBtn8.Enabled           := True;  BitBtn9.Enabled           := True;
+               If ( DmGestion.GenerarNumeroFactura(Control_Gestion) = True    ) Then
+                Begin
+                     If Control_Gestion.Tipo_Factura = 'PENDIENTE' then
+                      Begin
+                           If MessageDlg('El cliente seleccionado tiene un factura en proceso ' + sLineBreak +
+                           'Si desea puede seguir en el proceso de facturacion de la misma ('+FormatFloat('0000',Control_Gestion.Cons_Factura)+'), o de lo contrario debera eliminar la factura para poder generar una nueva.' + sLineBreak +
+                           'Desea seguir editando la factura?' ,mtConfirmation, [mbYes, mbNo], 0 ) = mrYes then
+                             Begin
+                                 Factura := Control_Gestion.Cons_Factura;
+                                 DateTimePicker1.Date := Control_Gestion.Fecha_Temporal;
+                             End
+                               Else
+                                  Begin
+                                      Exit;
+                                  End;
+                      End
+                        Else
+                           Begin
+                               Factura := Control_Gestion.Cons_Factura;
+                               DateTimePicker1.Date := Control_Gestion.Fecha_Temporal;
+                           End;
+                     DmGestion.ProdcutosDisponibles(Factura);
+                End
+                  Else
+                      Begin
+                         MessageDlg('No es posible iniciar el proceso de facturación por favor cierre e intente de nuevo, o comuníquese con el administrador del sistema ', mtInformation,[mbOk], 0, mbOk);
+                         Exit;
+                      End;
 
-       End
-         Else
-            Begin
-                DBLookupComboBox4.Enabled := False; Edit8.Enabled             := False;
-                BitBtn8.Enabled           := False; BitBtn9.Enabled           := False;
-                MessageDlg('la identificacion ingresada no esta registrada. Verifique e intente de nuevo', mtInformation,[mbOk], 0, mbOk); Exit;
-                Exit;
-            End;
-    Finally
-      Control_Gestion.Free;
-    End;
-  End
+           End
+             Else
+                Begin
+                    If MessageDlg('PARA PODER REALIZAR UNA FACTURA EL CLIENTE DEBE ESTAR REGISTRADO, DESEA REGISTRARLO ? '  ,mtConfirmation, [mbYes, mbNo], 0 ) = mrYes then
+                     Begin
+                         BitBtn2Click(Sender);
+                         Edit1.Text :=  Trim(Edit9.Text);
+                     End
+                       Else
+                          Begin
+                              Exit;
+                          End;
+                          DBLookupComboBox4.Enabled := False; Edit8.Enabled     := False;
+                          BitBtn8.Enabled           := False; BitBtn9.Enabled   := False;
+                End;
+        Finally
+          Control_Gestion.Free;
+        End;
+      End
+end;
 
+//------- Aliementa los datos  con el producto seleccionado.
+procedure TViewGestion.DBLookupComboBox4Exit(Sender: TObject);
+begin
+    Control_Gestion.Pro_Codigo   := DBLookupComboBox4.KeyValue;
+    Control_Gestion.Valor_Pro    := DmGestion.QryProductosVALOR.Value;
 end;
 // **** Adicion de Servicios a la factura.
 procedure TViewGestion.BitBtn9Click(Sender: TObject);
- Var Itemns         :   Currency;
-     ValorFactura   :   Currency;
+
 begin
-   If ( Edit10.Text = EmptyStr ) then
+   If ( Edit10.Text = EmptyStr ) Then
     Begin
-        MessageDlg('Para poder ingresar productos debe Ingresar el cliente.', mtInformation,[mbOk], 0, mbOk); Exit;
-        Edit10.SetFocus;
+        MessageDlg('Para poder registrar productos debe Ingresar el cliente.', mtInformation,[mbOk], 0, mbOk); Exit;
+        Edit10.SetFocus; Exit;
     End;
-   If ( Edit8.Text = EmptyStr ) then
+   If ( DBLookupComboBox4.KeyValue = EmptyStr ) Then
+    Begin
+        MessageDlg('Debe seleccione el producto a registrar.', mtInformation,[mbOk], 0, mbOk); Exit;
+        DBLookupComboBox4.SetFocus; Exit;
+    End;
+
+   If ( Edit8.Text = EmptyStr ) Then
     Begin
         MessageDlg('Ingrese la cantidad a registrar de los productos.', mtInformation,[mbOk], 0, mbOk); Exit;
-        Edit10.SetFocus;
+        Edit8.SetFocus; Exit;
     End;
-   If ( DBLookupComboBox4.KeyValue = EmptyStr ) then
-    Begin
-        MessageDlg('Seleccione el producto a registrar.', mtInformation,[mbOk], 0, mbOk); Exit;
-        DBLookupComboBox4.SetFocus;
-    End;
-   Itemns := DBGrid1.DataSource.DataSet.RecordCount;
-   If MessageDlg('Desea Iniciar el proceso de facturacion.?', mtConfirmation, [mbYes, mbNo], 0, mbYes) = mrYes  then
-    Begin
-        MessageDlg('Saliendo del sistema.', mtInformation, [mbOk], 0, mbOk); Close;
 
+   If ( StrToCurrDef( (Edit8.Text),9999)  = 9999 ) Then
+    Begin
+        MessageDlg('Solo se permite el Ingreso de numeros.', mtInformation,[mbOk], 0, mbOk); Exit;
+        Edit8.SetFocus; Exit;
     End;
+
+   If ( ( StrToCurr(Edit8.Text) <= 0 ) Or ( StrToCurr(Edit8.Text) > 9998 )  )Then
+    Begin
+        MessageDlg('La cantidad por producto a registrar debe estar entre 1 y 9998.', mtInformation,[mbOk], 0, mbOk); Exit;
+        Edit8.SetFocus; Exit;
+    End;
+
+    Control_Gestion.Cant_Pro     := StrToCurr(Edit8.Text);
+    Control_Gestion.Num_Factura  := Factura;
+
+    If  DmGestion.FacturarProducto(Control_Gestion) = True Then
+     Begin
+          DmGestion.ConsultaDetalle(Factura);
+          DmGestion.ProdcutosDisponibles(Factura);
+          Edit9.Text := EmptyStr;
+          DBLookupComboBox4.SetFocus;
+     End
+       Else
+          Begin
+              MessageDlg('Error al momento de ingresar el servicio.', mtInformation,[mbOk], 0, mbOk); Exit;
+          End;
+
+    Label21.Caption  := FormatFloat('0000',Factura);
+    Label22.Caption  := 'VALOR TOTAL : $'+  formatfloat('#,##0', Control_Gestion.Valor_Total );
 end;
+
+
+
+
+
+
+
+
 
 
 

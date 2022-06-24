@@ -2,21 +2,21 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>2022/05/07 15:10:48.000.201,=C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 15:13:06.000.615,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm=C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>2022/05/07 15:13:06.000.615,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas=C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 15:14:00.000.249,D:\BUYS_BIG\Ejecutable\BUYS_BIG.dproj=C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2022/05/07 15:13:06.000.615,C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.dfm=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm</Transaction>
+    <Transaction>2022/05/07 15:13:06.000.615,C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Unit1.pas=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas</Transaction>
+    <Transaction>2022/05/07 15:14:00.000.249,C:\Users\OJDCV\OneDrive\Documentos\Embarcadero\Studio\Projects\Project1.dproj=D:\BUYS_BIG\Ejecutable\BUYS_BIG.dproj</Transaction>
     <Transaction>2022/05/07 15:25:21.000.245,=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 15:27:41.000.057,D:\BUYS_BIG\Fuente\DataModel\DmConnectionDB.pas=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 15:27:41.000.057,D:\BUYS_BIG\Fuente\DataModel\DmConnectionDB.dfm=D:\BUYS_BIG\Ejecutable\Unit1.dfm</Transaction>
-    <Transaction>2022/05/07 16:08:55.000.268,D:\BUYS_BIG\Fuente\Vista\Gestion\FrmGestion.dfm=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm</Transaction>
-    <Transaction>2022/05/07 16:08:55.000.267,D:\BUYS_BIG\Fuente\Vista\Gestion\FrmGestion.pas=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas</Transaction>
+    <Transaction>2022/05/07 15:27:41.000.057,D:\BUYS_BIG\Ejecutable\Unit1.dfm=D:\BUYS_BIG\Fuente\DataModel\DmConnectionDB.dfm</Transaction>
+    <Transaction>2022/05/07 15:27:41.000.057,D:\BUYS_BIG\Ejecutable\Unit1.pas=D:\BUYS_BIG\Fuente\DataModel\DmConnectionDB.pas</Transaction>
+    <Transaction>2022/05/07 16:08:55.000.267,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas=D:\BUYS_BIG\Fuente\Vista\Gestion\FrmGestion.pas</Transaction>
+    <Transaction>2022/05/07 16:08:55.000.268,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm=D:\BUYS_BIG\Fuente\Vista\Gestion\FrmGestion.dfm</Transaction>
     <Transaction>2022/05/07 16:12:24.000.030,=D:\BUYS_BIG\Ejecutable\Unit2.pas</Transaction>
-    <Transaction>2022/05/07 16:12:42.000.089,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas=D:\BUYS_BIG\Ejecutable\Unit2.pas</Transaction>
-    <Transaction>2022/05/07 16:12:42.000.089,D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm=D:\BUYS_BIG\Ejecutable\Unit2.dfm</Transaction>
+    <Transaction>2022/05/07 16:12:42.000.089,D:\BUYS_BIG\Ejecutable\Unit2.dfm=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.dfm</Transaction>
+    <Transaction>2022/05/07 16:12:42.000.089,D:\BUYS_BIG\Ejecutable\Unit2.pas=D:\BUYS_BIG\Fuente\Vista\FrmPrincipal.pas</Transaction>
     <Transaction>2022/05/07 16:15:55.000.927,=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 16:16:39.000.961,D:\BUYS_BIG\Fuente\Controlador\Gestion\Control_Gestion.pas=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
+    <Transaction>2022/05/07 16:16:39.000.961,D:\BUYS_BIG\Ejecutable\Unit1.pas=D:\BUYS_BIG\Fuente\Controlador\Gestion\Control_Gestion.pas</Transaction>
     <Transaction>2022/05/07 16:20:32.000.838,=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 16:21:22.000.474,D:\BUYS_BIG\Fuente\Modelo\Gestion\DmGestion.pas=D:\BUYS_BIG\Ejecutable\Unit1.pas</Transaction>
-    <Transaction>2022/05/07 16:21:22.000.474,D:\BUYS_BIG\Fuente\Modelo\Gestion\DmGestion.dfm=D:\BUYS_BIG\Ejecutable\Unit1.dfm</Transaction>
+    <Transaction>2022/05/07 16:21:22.000.474,D:\BUYS_BIG\Ejecutable\Unit1.pas=D:\BUYS_BIG\Fuente\Modelo\Gestion\DmGestion.pas</Transaction>
+    <Transaction>2022/05/07 16:21:22.000.474,D:\BUYS_BIG\Ejecutable\Unit1.dfm=D:\BUYS_BIG\Fuente\Modelo\Gestion\DmGestion.dfm</Transaction>
   </Transactions>
 </BorlandProject>
